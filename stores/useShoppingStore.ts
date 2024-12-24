@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 
 // Определяем интерфейс для отдельного элемента списка покупок
 interface ShoppingItem {
@@ -43,6 +44,18 @@ export const useShoppingStore = defineStore('shopping', {
   // Actions - методы для изменения состояния
   actions: {
     // @TODO Добавление нового элемента в список
+    addItem(item: Omit<ShoppingItem, 'id' | 'createdAt'>) {
+      // @TODO проверить есть ли элемент с таким именем
+      const newItem: ShoppingItem = {
+        id: uuidv4(), // Генерируем уникальный ID
+        createdAt: new Date(),
+        ...item
+      }
+      this.items.push(newItem)
+
+      // @TODO Сохраняем в локальное хранилище
+      //this.saveToLocalStorage()
+    }
 
     // @TODO Удаление элемента из списка
 
@@ -54,7 +67,7 @@ export const useShoppingStore = defineStore('shopping', {
 
     // @TODO Загрузка данных из локального хранилища
 
-    // @TODO Сохранение данных в локальное хранилище
+    // @TODO saveToLocalStorage() Сохранение данных в локальное хранилище
 
     // @TODO Очистка списка
   }

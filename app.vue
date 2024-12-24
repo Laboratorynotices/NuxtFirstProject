@@ -10,5 +10,14 @@ import { useShoppingStore } from '@/stores/useShoppingStore'
 
 // начиная со следующей строчки мы получаем доступ
 const shoppingStore = useShoppingStore()
-console.log(shoppingStore.items)
+
+// Добавление элемента
+shoppingStore.addItem({
+  name: 'Молоко',
+  quantity: 1,
+  completed: false,
+  category: 'Продукты'
+})
+
+console.log(shoppingStore.items);
 </script>
