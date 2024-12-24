@@ -15,6 +15,7 @@ services:
           npm install -g -D firebase-tools
           npx nuxi@latest module add tailwindcss
           npm i pinia @pinia/nuxt
+          npm install uuid
         fi;
         npm run dev -- --host
       "
