@@ -6,16 +6,7 @@
     <!-- Фильтры и статистика -->
     <div class="flex justify-between items-center mb-4">
       <!-- @TODO статистика -->
-      <select v-model="currentCategory" class="p-2 border rounded">
-        <option value="">Все категории</option>
-        <option
-          v-for="category in store.categories"
-          :key="category"
-          :value="category"
-        >
-          {{ category }}
-        </option>
-      </select>
+      <CategoryFilter ref="categoryFilter" />
     </div>
 
     <!-- Список покупок -->
@@ -59,11 +50,21 @@ const store = useShoppingStore();
 // Текущая выбранная категория для фильтрации
 const currentCategory = ref("");
 
-// Вычисляемый список с учётом фильтра по категории
-const filteredItems = computed(() => {
-  if (!currentCategory.value) {
-    return store.items;
-  }
-  return store.getItemsByCategory(currentCategory.value);
-});
+/********************************************
+ * Получение данных из дочернего компонента *
+ *************  CategoryFilter  *************
+ ********************************************/
+/**
+ * Объявляем свойство, которое будет принимать данные из дочернего компонента
+ * Выбранную категорию
+ */
+const categoryFilter = ref();
+
+/**
+ * Обработчик события, когда данные из дочернего компонента изменяются
+ * Вычисляемый список с учётом фильтра по категории
+ */
+const filteredItems = computed(
+  () => categoryFilter.value?.filteredItems || store.items
+);
 </script>
