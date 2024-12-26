@@ -37,18 +37,21 @@ const filteredItems = computed(() => {
  * Передача данных родительскому компоненту *
  ********************************************/
 // объявление события, которое компонент может отправлять родителю
-const emit = defineEmits(["update:filteredItems"]);
+const emit = defineEmits(["update:filteredItems", "update:selectedCategory"]);
 
 /**
  * Функция вызывается каждый раз, когда пользователь меняет категорию в select
- * Она отправляет родителю новый отфильтрованный список через событие
+ * Она отправляет родителю новый отфильтрованный список
+ * и выбранную категорию через событие
  */
 const updateFilter = () => {
   emit("update:filteredItems", filteredItems.value);
+  emit("update:selectedCategory", selectedCategory.value);
 };
 
-// Экспортируем filteredItems для родительского компонента
+// Экспортируем filteredItems и selectedCategory для родительского компонента
 defineExpose({
   filteredItems,
+  selectedCategory,
 });
 </script>

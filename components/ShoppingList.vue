@@ -47,9 +47,6 @@ import { useShoppingStore } from "@/stores/useShoppingStore";
 // Инициализируем store
 const store = useShoppingStore();
 
-// Текущая выбранная категория для фильтрации
-const currentCategory = ref("");
-
 /********************************************
  * Получение данных из дочернего компонента *
  *************  CategoryFilter  *************
@@ -66,5 +63,12 @@ const categoryFilter = ref();
  */
 const filteredItems = computed(
   () => categoryFilter.value?.filteredItems || store.items
+);
+
+/**
+ * Получаем данные из дочернего компонента
+ */
+const currentCategory = computed(
+  () => categoryFilter.value?.selectedCategory || ""
 );
 </script>
