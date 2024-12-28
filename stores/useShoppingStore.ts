@@ -32,9 +32,11 @@ export const useShoppingStore = defineStore("shopping", {
 
   // Геттеры - вычисляемые свойства store
   getters: {
-    // @TODO Получаем количество элементов в списке
+    // Получаем количество элементов в списке
+    totalItems: (state) => state.items.length,
 
-    // @TODO Получаем только невыполненные элементы
+    // Получаем только невыполненные элементы
+    activeItems: (state) => state.items.filter((item) => !item.completed),
 
     // Получаем элементы по категории
     getItemsByCategory: (state) => {

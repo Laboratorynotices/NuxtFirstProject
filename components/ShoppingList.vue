@@ -5,7 +5,10 @@
 
     <!-- Фильтры и статистика -->
     <div class="flex justify-between items-center mb-4">
-      <!-- @TODO статистика -->
+      <!-- статистика -->
+      <div class="text-sm text-gray-600">
+        Всего: {{ store.totalItems }}, Активных: {{ store.activeItems.length }}
+      </div>
       <CategoryFilter ref="categoryFilter" />
     </div>
 
