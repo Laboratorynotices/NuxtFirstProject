@@ -61,7 +61,18 @@ export const useShoppingStore = defineStore("shopping", {
       this.saveToLocalStorage();
     },
 
-    // @TODO Удаление элемента из списка
+    // Удаление элемента из списка
+    removeItem(itemId: string) {
+      // Используем метод findIndex для поиска индекса элемента в массиве по его id
+      const index = this.items.findIndex((item) => item.id === itemId);
+      if (index > -1) {
+        // Если элемент найден (индекс больше -1),
+        // используем метод splice для удаления одного элемента начиная с найденного индекса
+        this.items.splice(index, 1);
+        // После удаления сохраняем обновленный список
+        this.saveToLocalStorage();
+      }
+    },
 
     // @TODO Обновление существующего элемента
 
