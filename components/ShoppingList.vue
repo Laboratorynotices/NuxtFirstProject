@@ -71,4 +71,9 @@ const filteredItems = computed(
 const currentCategory = computed(
   () => categoryFilter.value?.selectedCategory || ""
 );
+
+// Загружаем сохранённые данные при монтировании компонента
+onMounted(() => {
+  store.loadFromLocalStorage();
+});
 </script>
