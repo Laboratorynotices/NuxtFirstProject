@@ -44,7 +44,8 @@ export const useShoppingStore = defineStore("shopping", {
         state.items.filter((item) => item.category === category);
     },
 
-    // @TODO Проверяем, есть ли незавершённые элементы
+    // Проверяем, есть ли незавершённые элементы
+    hasActiveItems: (state) => state.items.some((item) => !item.completed),
   },
 
   // Actions - методы для изменения состояния
@@ -126,6 +127,10 @@ export const useShoppingStore = defineStore("shopping", {
       }
     },
 
-    // @TODO Очистка списка
+    // Очистка списка
+    clearCompleted() {
+      this.items = this.items.filter((item) => !item.completed);
+      this.saveToLocalStorage();
+    },
   },
 });
