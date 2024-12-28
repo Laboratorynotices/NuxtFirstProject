@@ -76,7 +76,14 @@ export const useShoppingStore = defineStore("shopping", {
 
     // @TODO Обновление существующего элемента
 
-    // @TODO Переключение статуса выполнения
+    // Переключение статуса выполнения
+    toggleComplete(itemId: string) {
+      const item = this.items.find((item) => item.id === itemId);
+      if (item) {
+        item.completed = !item.completed;
+        this.saveToLocalStorage();
+      }
+    },
 
     // @TODO Добавление новой категории
 
