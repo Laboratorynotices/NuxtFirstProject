@@ -71,6 +71,9 @@ import { useShoppingStore } from "@/stores/useShoppingStore";
 // Инициализируем store
 const store = useShoppingStore();
 
+// Загружаем сохранённые данные
+store.loadFromLocalStorage();
+
 /********************************************
  * Получение данных из дочернего компонента *
  *************  CategoryFilter  *************
@@ -95,9 +98,4 @@ const filteredItems = computed(
 const currentCategory = computed(
   () => categoryFilter.value?.selectedCategory || ""
 );
-
-// Загружаем сохранённые данные при монтировании компонента
-onMounted(() => {
-  store.loadFromLocalStorage();
-});
 </script>
