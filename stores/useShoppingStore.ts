@@ -4,6 +4,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  updateDoc,
   type DocumentData,
 } from "firebase/firestore";
 import { defineStore } from "pinia";
@@ -77,7 +78,7 @@ export const useShoppingStore = defineStore("shopping", {
       this.items.push({ id: docRef.id, ...newItem });
 
       // Сохраняем в локальное хранилище
-      this.saveToLocalStorage();
+      //this.saveToLocalStorage();
     },
 
     // Удаление элемента из списка
@@ -100,10 +101,16 @@ export const useShoppingStore = defineStore("shopping", {
 
     // Переключение статуса выполнения
     toggleComplete(itemId: string) {
+      // Используем метод findIndex для поиска индекса элемента в массив
       const item = this.items.find((item) => item.id === itemId);
       if (item) {
+        // Если элемент найден, переключаем его статус
         item.completed = !item.completed;
-        this.saveToLocalStorage();
+
+        // Сохраняем изменения в Firebase
+        this.updateDocInFirebase(itemId, { completed: item.completed });
+        // Сохраняем в локальное хранилище
+        //this.saveToLocalStorage();
       }
     },
 
@@ -185,6 +192,26 @@ export const useShoppingStore = defineStore("shopping", {
       } catch (e) {
         this.error = "Ошибка при удалении элемента";
         console.error("Ошибка при удалении shoppingItem: ", e);
+      }
+    },
+
+    // Обновление элемента в Firebase
+    async updateDocInFirebase(
+      id: string,
+      item: Partial<Omit<ShoppingItem, "id" | "createdAt">>
+    ) {
+      // Используем $db для доступа к базе данных
+      const { $db } = useNuxtApp();
+
+      try {
+        // Получаем указатель на элемент, который нужно обновить
+        const docRef = doc($db, COLLECTION_NAME, id);
+
+        // Обновляем элемент
+        await updateDoc(docRef, item);
+      } catch (e) {
+        this.error = "Ошибка при обновлении элемента";
+        console.error("Ошибка при обновлении shoppingItem: ", e);
       }
     },
 
