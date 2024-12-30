@@ -1,10 +1,15 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   type DocumentData,
 } from "firebase/firestore";
 import { defineStore } from "pinia";
+
+// Имя коллекции в Firebase
+const COLLECTION_NAME: string = "shoppingItems" as const;
 
 // Определяем интерфейс для отдельного элемента списка покупок
 interface ShoppingItem {
@@ -83,8 +88,11 @@ export const useShoppingStore = defineStore("shopping", {
         // Если элемент найден (индекс больше -1),
         // используем метод splice для удаления одного элемента начиная с найденного индекса
         this.items.splice(index, 1);
+
+        // Удаляем элемент из базы данных
+        this.deleteDocFromFirebase(itemId);
         // После удаления сохраняем обновленный список
-        this.saveToLocalStorage();
+        //this.saveToLocalStorage();
       }
     },
 
@@ -128,7 +136,7 @@ export const useShoppingStore = defineStore("shopping", {
         const { $db } = useNuxtApp();
 
         // Делаем из полученных данных массив и приводим к формату списка ShoppingItem
-        this.items = (await getDocs(collection($db, "shoppingItems"))).docs.map(
+        this.items = (await getDocs(collection($db, COLLECTION_NAME))).docs.map(
           (doc) => ({
             ...(doc.data() as ShoppingItem),
             id: doc.id,
@@ -140,7 +148,7 @@ export const useShoppingStore = defineStore("shopping", {
       }
     },
 
-    // Сохранение данных в Firebase
+    // Добавление элемента в Firebase
     async addDocToFirebase(
       item: Omit<ShoppingItem, "id">
     ): Promise<DocumentData> {
@@ -152,7 +160,7 @@ export const useShoppingStore = defineStore("shopping", {
         // В первый раз ещё и создаст "коллекцию"
         return await addDoc(
           // авторизация и указание на "коллекцию"
-          collection($db, "shoppingItems"),
+          collection($db, COLLECTION_NAME),
           // данные для добавления
           item
         );
@@ -160,6 +168,23 @@ export const useShoppingStore = defineStore("shopping", {
         this.error = "Ошибка при добавлении элемента";
         console.error("Ошибка при добавлении shoppingItem: ", e);
         return { id: undefined };
+      }
+    },
+
+    // Удаление элемента из Firebase
+    async deleteDocFromFirebase(id: string): Promise<void> {
+      // Используем $db для доступа к базе данных
+      const { $db } = useNuxtApp();
+
+      try {
+        // Получаем указатель на элемент, который нужно удалить
+        const docRef = doc($db, COLLECTION_NAME, id);
+
+        // Удаляем элемент
+        await deleteDoc(docRef);
+      } catch (e) {
+        this.error = "Ошибка при удалении элемента";
+        console.error("Ошибка при удалении shoppingItem: ", e);
       }
     },
 
