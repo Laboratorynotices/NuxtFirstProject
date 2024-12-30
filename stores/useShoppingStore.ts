@@ -1,6 +1,10 @@
-import { addDoc, collection, type DocumentData } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  type DocumentData,
+} from "firebase/firestore";
 import { defineStore } from "pinia";
-//import { v4 as uuidv4 } from "uuid";
 
 // Определяем интерфейс для отдельного элемента списка покупок
 interface ShoppingItem {
@@ -56,7 +60,6 @@ export const useShoppingStore = defineStore("shopping", {
       // @TODO проверить есть ли элемент с таким именем
       // Создаём новый элемент
       const newItem: ShoppingItem = {
-        //id: uuidv4(), // Генерируем уникальный ID
         createdAt: new Date(),
         ...item,
       };
@@ -118,6 +121,25 @@ export const useShoppingStore = defineStore("shopping", {
       }
     },
 
+    // Загрузка данных из Firebase
+    async loadFromFirebase() {
+      try {
+        // Используем $db для доступа к базе данных
+        const { $db } = useNuxtApp();
+
+        // Делаем из полученных данных массив и приводим к формату списка ShoppingItem
+        this.items = (await getDocs(collection($db, "shoppingItems"))).docs.map(
+          (doc) => ({
+            ...(doc.data() as ShoppingItem),
+            id: doc.id,
+          })
+        );
+      } catch (e) {
+        this.error = "Ошибка при загрузке данных";
+        console.error("Ошибка при загрузке из Firebase:", e);
+      }
+    },
+
     // Сохранение данных в Firebase
     async addDocToFirebase(
       item: Omit<ShoppingItem, "id">
@@ -135,6 +157,7 @@ export const useShoppingStore = defineStore("shopping", {
           item
         );
       } catch (e) {
+        this.error = "Ошибка при добавлении элемента";
         console.error("Ошибка при добавлении shoppingItem: ", e);
         return { id: undefined };
       }
