@@ -52,8 +52,8 @@ const newItem = ref({
 });
 
 // Метод добавления нового элемента
-const addNewItem = () => {
-  store.addItem({
+const addNewItem = async () => {
+  await store.addItem({
     name: newItem.value.name,
     quantity: newItem.value.quantity,
     category: newItem.value.category,
