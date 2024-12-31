@@ -234,8 +234,22 @@ export const useShoppingStore = defineStore("shopping", {
 
     // Очистка списка
     clearCompleted() {
+      // Отдельно сохраняем элементы, которые надо удалить
+      const itemsToDelete: ShoppingItem[] = this.items.filter(
+        (item) => item.completed
+      );
+
+      // Удаляем все элементы, которые были отмечены как завершенные
       this.items = this.items.filter((item) => !item.completed);
-      this.saveToLocalStorage();
+
+      // Проходимся по всем элементам, которые нужно удалить,...
+      itemsToDelete.forEach((item) => {
+        // ... и удаляем их из базы данных
+        this.deleteDocFromFirebase(item.id as string);
+      });
+
+      // Сохраняем изменения в localStorage
+      //this.saveToLocalStorage();
     },
   },
 });
