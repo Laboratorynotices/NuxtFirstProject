@@ -76,9 +76,6 @@ export const useShoppingStore = defineStore("shopping", {
 
       // Добавляем элемент в список, добавляя ему ID
       this.items.push({ id: docRef.id, ...newItem });
-
-      // Сохраняем в локальное хранилище
-      //this.saveToLocalStorage();
     },
 
     // Удаление элемента из списка
@@ -92,8 +89,6 @@ export const useShoppingStore = defineStore("shopping", {
 
         // Удаляем элемент из базы данных
         this.deleteDocFromFirebase(itemId);
-        // После удаления сохраняем обновленный список
-        //this.saveToLocalStorage();
       }
     },
 
@@ -109,32 +104,10 @@ export const useShoppingStore = defineStore("shopping", {
 
         // Сохраняем изменения в Firebase
         this.updateDocInFirebase(itemId, { completed: item.completed });
-        // Сохраняем в локальное хранилище
-        //this.saveToLocalStorage();
       }
     },
 
     // @TODO Добавление новой категории
-
-    // Загрузка данных из локального хранилища
-    loadFromLocalStorage() {
-      try {
-        // Пытается получить данные из localStorage по ключу "shopping-list"
-        const saved = localStorage.getItem("shopping-list");
-        if (saved) {
-          // Если данные найдены, преобразует их из JSON строки обратно в объект
-          const parsed = JSON.parse(saved);
-          // Для каждого элемента списка преобразует строковое представление даты обратно в объект Date
-          this.items = parsed.items.map((item: any) => ({
-            ...item,
-            createdAt: new Date(item.createdAt),
-          }));
-        }
-      } catch (e) {
-        this.error = "Ошибка при загрузке данных";
-        console.error("Ошибка при загрузке из localStorage:", e);
-      }
-    },
 
     // Загрузка данных из Firebase
     async loadFromFirebase() {
@@ -215,23 +188,6 @@ export const useShoppingStore = defineStore("shopping", {
       }
     },
 
-    // Сохранение данных в локальное хранилище
-    saveToLocalStorage() {
-      try {
-        // Преобразует текущий список items в JSON строку
-        // И сохраняет эту строку в localStorage
-        localStorage.setItem(
-          "shopping-list",
-          JSON.stringify({
-            items: this.items,
-          })
-        );
-      } catch (e) {
-        this.error = "Ошибка при сохранении данных";
-        console.error("Ошибка при сохранении в localStorage:", e);
-      }
-    },
-
     // Очистка списка
     clearCompleted() {
       // Отдельно сохраняем элементы, которые надо удалить
@@ -247,9 +203,6 @@ export const useShoppingStore = defineStore("shopping", {
         // ... и удаляем их из базы данных
         this.deleteDocFromFirebase(item.id as string);
       });
-
-      // Сохраняем изменения в localStorage
-      //this.saveToLocalStorage();
     },
   },
 });
