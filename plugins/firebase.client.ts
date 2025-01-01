@@ -5,11 +5,13 @@ export default defineNuxtPlugin(() => {
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
+  const config = useRuntimeConfig();
+
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: process.env.FIREBASE_CONFIG_API_KEY,
     authDomain: "listsmartapp2.firebaseapp.com",
-    projectId: "listsmartapp2",
+    projectId: config.public.FIREBASE_CONFIG_PROJECT_ID as string,
     storageBucket: "listsmartapp2.firebasestorage.app",
     messagingSenderId: process.env.FIREBASE_CONFIG_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_CONFIG_APP_ID,
