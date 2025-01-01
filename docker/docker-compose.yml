@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   nuxt-app:
     build: .
@@ -13,9 +13,9 @@ services:
           npx nuxi init . --package-manager npm --force --no-telemetry --git-init=false
           npm install firebase
           npm install -g -D firebase-tools
+          npm install firebase-admin
           npx nuxi@latest module add tailwindcss
           npm i pinia @pinia/nuxt
-          npm install uuid
         fi;
         npm run dev -- --host
       "
