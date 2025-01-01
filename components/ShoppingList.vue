@@ -71,8 +71,10 @@ import { useShoppingStore } from "@/stores/useShoppingStore";
 // Инициализируем store
 const store = useShoppingStore();
 
-// Загружаем сохранённые данные
-await store.loadFromFirebase();
+// Загружаем сохранённые данные при монтировании компонента
+onMounted(() => {
+  store.loadFromFirebase();
+});
 
 /********************************************
  * Получение данных из дочернего компонента *
