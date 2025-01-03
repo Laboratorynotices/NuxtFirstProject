@@ -30,7 +30,36 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // @TODO : Добавить обработку POST
+  // POST - создать новый документ
+  /* Вызов:
+    const newDoc = await $fetch('/api/firebase', {
+      method: 'POST',
+      body: {
+        ShoppingItem
+      }
+    })
+    */
+  if (event.method === "POST") {
+    try {
+      const item = await readBody(event);
+
+      const docRef = await db.collection(COLLECTION_NAME).add({
+        ...item,
+        createdAt: new Date(),
+      });
+
+      const newDoc = await docRef.get();
+      console.log(formatDocument(newDoc));
+      return formatDocument(newDoc);
+    } catch (e) {
+      console.error("Ошибка при добавлении элемента: ", e);
+
+      throw createError({
+        statusCode: 500,
+        message: "Ошибка при добавлении элемента",
+      });
+    }
+  }
 
   // В даном случае методы PUT и DELETE не поддерживаются.
   createErrorUnknownMethod();

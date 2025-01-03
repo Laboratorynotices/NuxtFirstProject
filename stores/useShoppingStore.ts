@@ -1,11 +1,4 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  updateDoc,
-  type DocumentData,
-} from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { defineStore } from "pinia";
 
 // Имя коллекции в Firebase
@@ -69,12 +62,19 @@ export const useShoppingStore = defineStore("shopping", {
         ...item,
       };
 
-      // Добавляем элемент в базу данных, получаем ID
-      // В первый раз ещё и создаст "коллекцию"
-      const docRef = await this.addDocToFirebase(newItem);
+      // Добавляем элемент в базу данных, получаем новый элемент
+      // В первый раз ещё и создаст "коллекцию" в базе данных
+      const savedItem: ShoppingItem = JSON.parse(
+        await $fetch("/api/firebase", {
+          method: "POST",
+          body: {
+            newItem,
+          },
+        })
+      );
 
-      // Добавляем элемент в список, добавляя ему ID
-      this.items.push({ id: docRef.id, ...newItem });
+      // Добавляем элемент в список
+      this.items.push(savedItem);
     },
 
     // Удаление элемента из списка
@@ -111,29 +111,6 @@ export const useShoppingStore = defineStore("shopping", {
     // Загрузка данных из Firebase
     async loadFromFirebase() {
       this.items = await $fetch("/api/firebase");
-    },
-
-    // Добавление элемента в Firebase
-    async addDocToFirebase(
-      item: Omit<ShoppingItem, "id">
-    ): Promise<DocumentData> {
-      // Используем $db для доступа к базе данных
-      const { $db } = useNuxtApp();
-
-      try {
-        // Добавляем элемент в базу данных
-        // В первый раз ещё и создаст "коллекцию"
-        return await addDoc(
-          // авторизация и указание на "коллекцию"
-          collection($db, COLLECTION_NAME),
-          // данные для добавления
-          item
-        );
-      } catch (e) {
-        this.error = "Ошибка при добавлении элемента";
-        console.error("Ошибка при добавлении shoppingItem: ", e);
-        return { id: undefined };
-      }
     },
 
     // Удаление элемента из Firebase
