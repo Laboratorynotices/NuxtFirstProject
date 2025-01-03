@@ -115,19 +115,9 @@ export const useShoppingStore = defineStore("shopping", {
 
     // Удаление элемента из Firebase
     async deleteDocFromFirebase(id: string): Promise<void> {
-      // Используем $db для доступа к базе данных
-      const { $db } = useNuxtApp();
-
-      try {
-        // Получаем указатель на элемент, который нужно удалить
-        const docRef = doc($db, COLLECTION_NAME, id);
-
-        // Удаляем элемент
-        await deleteDoc(docRef);
-      } catch (e) {
-        this.error = "Ошибка при удалении элемента";
-        console.error("Ошибка при удалении shoppingItem: ", e);
-      }
+      await $fetch("/api/firebase/" + id, {
+        method: "DELETE",
+      });
     },
 
     // Обновление элемента в Firebase

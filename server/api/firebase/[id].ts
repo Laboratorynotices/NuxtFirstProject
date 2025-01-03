@@ -84,5 +84,28 @@ export default defineEventHandler(async (event) => {
     return formatDocument(doc);
   }
 
+  // DELETE - удалить документ
+  /* Вызов:
+    await $fetch('/api/firebase/[id]', {
+      method: 'DELETE'
+    })
+    */
+  if (method === "DELETE") {
+    try {
+      await docRef.delete();
+      return { message: "Document deleted successfully" };
+    } catch (e) {
+      console.error(
+        `Ошибка при удалении документа с ID ${id} из Firebase: `,
+        e
+      );
+
+      throw createError({
+        statusCode: 500,
+        message: `Ошибка при удалении документа с ID ${id} из Firebase`,
+      });
+    }
+  }
+
   createErrorUnknownMethod();
 });
