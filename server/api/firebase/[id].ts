@@ -84,6 +84,38 @@ export default defineEventHandler(async (event) => {
     return formatDocument(doc);
   }
 
+  // PUT - обновить документ
+  /* Вызов:
+    const updatedDoc = await $fetch('/api/firebase/[id]', {
+      method: 'PUT',
+      body: {
+        Partial<ShoppingItem>
+      }
+    })
+  */
+  if (method === "PUT") {
+    const body = await readBody(event);
+
+    await docRef.update({
+      ...body,
+    });
+
+    try {
+      const updatedDoc = await docRef.get();
+      return formatDocument(updatedDoc);
+    } catch (e) {
+      console.error(
+        `Ошибка при обновлении документа с ID ${id} из Firebase: `,
+        e
+      );
+
+      throw createError({
+        statusCode: 500,
+        message: `Ошибка при обновлении документа с ID ${id} из Firebase`,
+      });
+    }
+  }
+
   // DELETE - удалить документ
   /* Вызов:
     await $fetch('/api/firebase/[id]', {

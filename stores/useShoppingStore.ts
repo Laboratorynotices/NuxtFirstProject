@@ -1,8 +1,4 @@
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { defineStore } from "pinia";
-
-// Имя коллекции в Firebase
-const COLLECTION_NAME: string = "shoppingItems" as const;
 
 // Определяем интерфейс для отдельного элемента списка покупок
 interface ShoppingItem {
@@ -125,19 +121,10 @@ export const useShoppingStore = defineStore("shopping", {
       id: string,
       item: Partial<Omit<ShoppingItem, "id" | "createdAt">>
     ) {
-      // Используем $db для доступа к базе данных
-      const { $db } = useNuxtApp();
-
-      try {
-        // Получаем указатель на элемент, который нужно обновить
-        const docRef = doc($db, COLLECTION_NAME, id);
-
-        // Обновляем элемент
-        await updateDoc(docRef, item);
-      } catch (e) {
-        this.error = "Ошибка при обновлении элемента";
-        console.error("Ошибка при обновлении shoppingItem: ", e);
-      }
+      return await $fetch("/api/firebase/" + id, {
+        method: "PUT",
+        body: item,
+      });
     },
 
     // Очистка списка
