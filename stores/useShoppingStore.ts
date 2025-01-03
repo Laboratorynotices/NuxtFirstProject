@@ -3,7 +3,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDocs,
   updateDoc,
   type DocumentData,
 } from "firebase/firestore";
@@ -111,21 +110,7 @@ export const useShoppingStore = defineStore("shopping", {
 
     // Загрузка данных из Firebase
     async loadFromFirebase() {
-      try {
-        // Используем $db для доступа к базе данных
-        const { $db } = useNuxtApp();
-
-        // Делаем из полученных данных массив и приводим к формату списка ShoppingItem
-        this.items = (await getDocs(collection($db, COLLECTION_NAME))).docs.map(
-          (doc) => ({
-            ...(doc.data() as ShoppingItem),
-            id: doc.id,
-          })
-        );
-      } catch (e) {
-        this.error = "Ошибка при загрузке данных";
-        console.error("Ошибка при загрузке из Firebase:", e);
-      }
+      this.items = await $fetch("/api/firebase");
     },
 
     // Добавление элемента в Firebase
